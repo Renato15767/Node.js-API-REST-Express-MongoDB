@@ -18,6 +18,15 @@ const livros = [
     }
 ]
 
+// Funções
+
+function buscaLivro(id){
+    // .findIndex = encontra o determinado elemento em um array
+    return livros.findIndex(livro => {
+        return livro.id === Number(id)
+    })
+}
+
 // Criando rotas em Express
 app.get("/", (req, res) =>{
     res.status(200).send("Curso de Node.js");
@@ -27,10 +36,33 @@ app.get("/livros", (req, res) =>{
     res.status(200).json(livros);
 });
 
+// O ":" significa que irá variar
+// Pega um livro por ID
+app.get("/livros/:id", (req, res) =>{
+    // req.params.id = pega o /:id
+    const index = buscaLivro(req.params.id);
+    res.status(200).json(livros[index]);
+});
+
+// Add um livro
 app.post("/livros", (req, res) =>{
+    // Adiciona + livros ao array
     livros.push(req.body);
     res.status(201).send("Livro cadastrado com sucesso!");
 });
+
+// Altera o array livros
+app.put("/livros/:id", (req, res) =>{
+    const index = buscaLivro(req.params.id);
+    livros[index].titulo = req.body.titulo;
+    res.status(200).json(livros);
+});
+
+// Deleta
+app.delete("/livros/:id", (req, res) =>{
+    const index = buscaLivro(req.params.id);
+    
+})
 
 // Exportando "app" para outros arquivos
 export default app;
