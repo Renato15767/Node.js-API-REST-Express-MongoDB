@@ -61,8 +61,10 @@ app.put("/livros/:id", (req, res) =>{
 // Deleta
 app.delete("/livros/:id", (req, res) =>{
     const index = buscaLivro(req.params.id);
-    
-})
+    // Apaga um elemento pelo "index"
+    livros.splice(index, 1);
+    res.status(200).send("Livro deletado com sucesso!");
+});
 
 // Exportando "app" para outros arquivos
 export default app;
