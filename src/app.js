@@ -1,4 +1,17 @@
 import express from "express";
+// Função do dbConnect.js
+import conectaDatabase from "./config/dbConnect.js";
+
+const conexao = await conectaDatabase();
+
+// on() = estão ligados a eventos (conexão, erro, etc)
+conexao.on("error", (erro) =>{
+    console.error("Erro de conexão = ", erro);
+});
+
+conexao.once("open", () =>{
+    console.log("Conexão feita com sucesso!");
+});
 
 const app = express();
 // Middleware = usado para ter acesso as requisições, respostas e modificá-las
