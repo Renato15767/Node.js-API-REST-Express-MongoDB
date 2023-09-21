@@ -28,12 +28,6 @@ app.get("/", (req, res) =>{
     res.status(200).send("Curso de Node.js");
 });
 
-app.get("/livros", async (req, res) =>{
-    // listaLivros = armazena os livros do BD
-    const listaLivros = await livro.find({});
-    res.status(200).json(listaLivros);
-});
-
 // O ":" significa que irá variar
 // Pega um livro por ID
 app.get("/livros/:id", (req, res) =>{
