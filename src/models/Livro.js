@@ -19,4 +19,4 @@ const livroSchema = new mongoose.Schema({
 const livro = mongoose.model("livro", livroSchema);
 //mongoose.model("livro", livroSchema) = se refere a coleção e o Schema criado
 
-export default livroSchema;
+export default livro;
