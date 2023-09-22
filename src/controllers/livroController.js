@@ -14,6 +14,17 @@ class LivroController{
         }
     }
 
+    static async listarLivroPorId(req, res){
+        try{
+            // Pega o ID da URL
+            const id = req.params.id
+            const livroEncontrado = await livro.findById(id);
+            res.status(200).json(livroEncontrado);
+        }catch(erro){
+            res.status(500).json({ message: `${erro.message} - falha na requisição do livro` });
+        }
+    }
+
     static async cadastrarLivros(req, res){
         try{
             // Cria um novo livro 
@@ -23,6 +34,18 @@ class LivroController{
 
         }catch(erro){
             res.status(500).json({ message: `${erro} - Falha ao cadastrar Livro!` })
+        }
+    }
+
+    static async atualizaLivro(req, res){
+        try{
+            const id = req.params.id
+            // atualiza o livro de acordo com o id passado
+            // O "req.body" vem os dados que serão alterados
+            await livro.findByIdAndUpdate(id, req.body);
+            res.status(200).json({ message: "Atualizado com sucesso!" });;
+        }catch(erro){
+            res.status(500).json({ message: `${erro.message} - falha na altualização do livro` });
         }
     }
 };
