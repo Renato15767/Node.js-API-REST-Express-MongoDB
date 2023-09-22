@@ -1,7 +1,7 @@
 import express from "express";
 // Função do dbConnect.js
 import conectaDatabase from "./config/dbConnect.js";
-import livro from "./models/Livro.js";
+import routes from "./routes/index.js";
 
 const conexao = await conectaDatabase();
 
@@ -17,19 +17,9 @@ conexao.once("open", () =>{
 //------------------------------------------
 
 const app = express();
-// Middleware = usado para ter acesso as requisições, respostas e modificá-las
-//              ou colocando informações extras
-// Irá fazer a conversão para json
-app.use(express.json());
+// "app vai para index.js"
+routes(app);
 
-
-// Criando rotas em Express
-app.get("/", (req, res) =>{
-    res.status(200).send("Curso de Node.js");
-});
-
-// O ":" significa que irá variar
-// Pega um livro por ID
 app.get("/livros/:id", (req, res) =>{
     // req.params.id = pega o /:id
     const index = buscaLivro(req.params.id);
