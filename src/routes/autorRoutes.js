@@ -3,6 +3,6 @@ import AutorController from "../controllers/autorController.js";
 
 const routes = express.Router();
 
-routes.get("/autor", AutorController.listarAutor);
+routes.get("/autores", AutorController.listarAutor);
 
 export default routes;
