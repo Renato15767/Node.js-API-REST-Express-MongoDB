@@ -1,5 +1,6 @@
 import express from "express";
 import livros from "./livroRoutes.js";
+import autores from "./autorRoutes.js";
 
 // "app" vem do app.js
 const routes = (app) =>{
@@ -8,7 +9,7 @@ const routes = (app) =>{
     // Middleware = usado para ter acesso as requisições, respostas e modificá-las
     //              ou colocando informações extras
     // Irá fazer a conversão para json
-    app.use(express.json(), livros);
+    app.use(express.json(), livros, autores);
 };
 
 export default routes;

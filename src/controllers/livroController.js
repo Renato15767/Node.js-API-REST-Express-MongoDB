@@ -1,5 +1,6 @@
 // importação do modelo Livro
 // para ser chamado pelo controller
+import { autor } from "../models/Autor.js";
 import livro from "../models/Livro.js";
 
 class LivroController{
@@ -26,11 +27,17 @@ class LivroController{
     }
 
     static async cadastrarLivros(req, res){
+        const novoLivro = req.body;
         try{
-            // Cria um novo livro 
-            const novoLivro = await livro.create(req.body);
-            // Devolva a msg
-            res.status(201).json({ message: "Criado com sucesso!", livro: novoLivro });
+            // Pega o autor pelo id do autor em "novoAutor"
+            const autorEncontrado = await autor.findById(novoLivro.autor);
+            // Adiciona o id do autor ao "novoLivro"
+            const livroCompleto = { ...novoLivro, autor: {...autorEncontrado._doc}};
+            // Cria livro
+            const livroCriado = await livro.create(livroCompleto);
+
+            // Devolve a msg
+            res.status(201).json({ message: "Criado com sucesso!", livro: livroCriado });
 
         }catch(erro){
             res.status(500).json({ message: `${erro} - Falha ao cadastrar Livro!` })
