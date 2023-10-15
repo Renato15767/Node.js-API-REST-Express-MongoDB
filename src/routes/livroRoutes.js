@@ -6,6 +6,7 @@ const routes = express.Router();
 
 // Vai "routes" vai chamar os métodos na classe "LivroController"
 routes.get("/livros", LivroController.listarLivros);
+routes.get("/livros/busca", LivroController.listarLivrosPorEditora);
 routes.get("/livros/:id", LivroController.listarLivroPorId);
 routes.post("/livros", LivroController.cadastrarLivros);
 routes.put("/livros/:id", LivroController.atualizaLivro);
