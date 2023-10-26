@@ -18,7 +18,7 @@ class LivroController{
     static async listarLivroPorId(req, res){
         try{
             // Pega o ID da URL
-            const id = req.params.id
+            const id = req.params.id;
             const livroEncontrado = await livro.findById(id);
             res.status(200).json(livroEncontrado);
         }catch(erro){
@@ -46,7 +46,7 @@ class LivroController{
 
     static async atualizaLivro(req, res){
         try{
-            const id = req.params.id
+            const id = req.params.id;
             // atualiza o livro de acordo com o id passado
             // O "req.body" vem os dados que serão alterados
             await livro.findByIdAndUpdate(id, req.body);
@@ -58,7 +58,7 @@ class LivroController{
 
     static async deletaLivro(req, res){
         try{
-            const id = req.params.id
+            const id = req.params.id;
             // Deleta o livro de acordo com o id passado
             // O "req.body" vem os dados que serão alterados
             await livro.findByIdAndDelete(id);
@@ -75,11 +75,11 @@ class LivroController{
             // 1-Propriedade. 2-Consulta/informação
             const livrosPorEditora = await livro.find({ editora: editora});
             res.status(200).json(livrosPorEditora);
-        }catch{
+        }catch(erro){
             res.status(500).json({ message: `${erro.message} - falha ao apagar o livro` });
         }
     }
-};
+}
 
 
 export default LivroController;
