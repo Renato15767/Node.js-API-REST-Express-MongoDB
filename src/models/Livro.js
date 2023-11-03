@@ -8,8 +8,8 @@ const livroSchema = new mongoose.Schema({
     // type: = é o tipo do dado
     id: { type: mongoose.Schema.Types.ObjectId },
     // "required: true" = campo obrigatório
-    titulo: { type: String, required: true },
-    editora: { type: String },
+    titulo: { type: String, required: [true, "O título do Livro é obrigatório."] },
+    editora: { type: String, required: [true, "A editora é obrigatória."]},
     preco: { type: Number },
     paginas: { type: Number },
     autor: autorSchema
