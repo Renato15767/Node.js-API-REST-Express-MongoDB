@@ -22,10 +22,12 @@ const app = express();
 // "app vai para index.js"
 routes(app);
 
+// Middleware de erro 404 (página não encontrada)
+app.use(manipulador404);
+
 // Middleware de erro 
 app.use(manipuladorDeErros);
 
-app.use(manipulador404);
 
 // Exportando "app" para outros arquivos
 export default app;
