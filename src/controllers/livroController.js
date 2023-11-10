@@ -1,5 +1,6 @@
 // importação do modelo Livro
 // para ser chamado pelo controller
+import NaoEncontrado from "../erros/NaoEncontrado.js";
 import { autor } from "../models/Autor.js";
 import livro from "../models/Livro.js";
 
@@ -20,7 +21,12 @@ class LivroController{
             // Pega o ID da URL
             const id = req.params.id;
             const livroEncontrado = await livro.findById(id);
-            res.status(200).json(livroEncontrado);
+            if(livroEncontrado !== null){
+                res.status(200).json(livroEncontrado);
+            }else{
+                next(new NaoEncontrado("ID do livro não localizado."));
+            }
+            
         }catch(erro){
             next(erro);
         }
@@ -49,8 +55,13 @@ class LivroController{
             const id = req.params.id;
             // atualiza o livro de acordo com o id passado
             // O "req.body" vem os dados que serão alterados
-            await livro.findByIdAndUpdate(id, req.body);
-            res.status(200).json({ message: "Atualizado com sucesso!" });
+            const livroAtualizado = await livro.findByIdAndUpdate(id, req.body);
+            if(livroAtualizado !== null){
+                res.status(200).json({ message: "Atualizado com sucesso!"});
+            }else{
+                next(new NaoEncontrado("ID do livro não localizado."));
+            }
+            
         }catch(erro){
             next(erro);
         }
@@ -61,8 +72,13 @@ class LivroController{
             const id = req.params.id;
             // Deleta o livro de acordo com o id passado
             // O "req.body" vem os dados que serão alterados
-            await livro.findByIdAndDelete(id);
-            res.status(200).json({ message: "Apagado com sucesso!" });
+            const livroDeletado = await livro.findByIdAndDelete(id);
+            if(livroDeletado !== null){
+                res.status(200).json({ message: "Apagado com sucesso!" });
+            }else{
+                next(new NaoEncontrado("ID do livro não localizado."));
+            }
+            
         }catch(erro){
             next(erro);
         }
@@ -73,8 +89,15 @@ class LivroController{
         const editora = req.query.editora;
         try{
             // 1-Propriedade. 2-Consulta/informação
-            const livrosPorEditora = await livro.find({ editora: editora});
-            res.status(200).json(livrosPorEditora);
+            const livrosPorEditora = await livro.find({editora: editora});
+            
+            // Não está funcionando por algum motivo 
+            if(livrosPorEditora !== null){
+                res.status(200).json(livrosPorEditora);
+            }else{
+                next( new NaoEncontrado("Editora do livro não localizado."));
+            }
+            
         }catch(erro){
             next(erro);
         }
