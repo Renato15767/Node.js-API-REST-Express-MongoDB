@@ -1,8 +1,8 @@
 // importação do modelo Livro
 // para ser chamado pelo controller
 import NaoEncontrado from "../erros/NaoEncontrado.js";
-import { autor } from "../models/Autor.js";
-import livro from "../models/Livro.js";
+import { autor } from "../models/index.js";
+import { livro } from "../models/index.js";
 
 class LivroController{
     static async listarLivros(req, res, next){
