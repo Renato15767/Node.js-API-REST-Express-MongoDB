@@ -84,20 +84,20 @@ class LivroController{
         }
     }
 
-    static async listarLivrosPorEditora(req, res, next){
-        // Pega a query "editora"/informação da consulta
-        const editora = req.query.editora;
+    // Para busca no POSTMAN -> /busca?editora=Aleph&titulo=Neuromancer
+    static async listarLivrosPorFiltro(req, res, next){
         try{
-            // 1-Propriedade. 2-Consulta/informação
-            const livrosPorEditora = await livro.find({editora: editora});
-            
-            // Não está funcionando por algum motivo 
-            if(livrosPorEditora !== null){
-                res.status(200).json(livrosPorEditora);
-            }else{
-                next( new NaoEncontrado("Editora do livro não localizado."));
-            }
-            
+            const {editora, titulo} = req.query;
+
+            // Cria um objeto para filtrar
+            const busca = {};
+
+            if (editora) busca.editora = editora;
+            if (titulo) busca.titulo = titulo;
+
+            const livrosResultado = await livro.find(busca);
+    
+            res.status(200).json(livrosResultado);
         }catch(erro){
             next(erro);
         }
