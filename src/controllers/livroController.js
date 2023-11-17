@@ -89,11 +89,15 @@ class LivroController{
         try{
             const {editora, titulo} = req.query;
 
+            // Cria uma regex para conseguir fazer uma busca sem precisar de todas as informações
+            // o "i" considera letras maísculas e minúsculas
+            //const regex = new RegExp(titulo, "i");
+
             // Cria um objeto para filtrar
             const busca = {};
 
             if (editora) busca.editora = editora;
-            if (titulo) busca.titulo = titulo;
+            if (titulo) busca.titulo = { $regex: titulo, $options: "i" };
 
             const livrosResultado = await livro.find(busca);
     
