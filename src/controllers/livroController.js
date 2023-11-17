@@ -87,25 +87,38 @@ class LivroController{
     // Para busca no POSTMAN -> /busca?editora=Aleph&titulo=Neuromancer
     static async listarLivrosPorFiltro(req, res, next){
         try{
-            const {editora, titulo} = req.query;
-
-            // Cria uma regex para conseguir fazer uma busca sem precisar de todas as informações
-            // o "i" considera letras maísculas e minúsculas
-            //const regex = new RegExp(titulo, "i");
-
-            // Cria um objeto para filtrar
-            const busca = {};
-
-            if (editora) busca.editora = editora;
-            if (titulo) busca.titulo = { $regex: titulo, $options: "i" };
-
-            const livrosResultado = await livro.find(busca);
+            const buscaFinal = processaBusca(req.query);
+            const livrosResultado = await livro.find(buscaFinal);
     
             res.status(200).json(livrosResultado);
+
         }catch(erro){
             next(erro);
         }
     }
+}
+
+function processaBusca(parametros){
+    const {editora, titulo, minPaginas, maxPaginas} = parametros;
+
+    // Cria uma regex para conseguir fazer uma busca sem precisar de todas as informações
+    // o "i" considera letras maísculas e minúsculas
+    //const regex = new RegExp(titulo, "i");
+
+    // Cria um objeto para filtrar
+    const busca = {};
+
+    if (editora) busca.editora = editora;
+    if (titulo) busca.titulo = { $regex: titulo, $options: "i" };
+
+    if (minPaginas || maxPaginas) busca.paginas = {};
+
+    // $gte = Greater Than or Equal = Maior ou igual
+    if (minPaginas) busca.paginas.$gte = minPaginas;
+    // $lte = Less Than or Equal = Menor ou igual
+    if (maxPaginas) busca.paginas.$lte = maxPaginas;
+
+    return busca;
 }
 
 

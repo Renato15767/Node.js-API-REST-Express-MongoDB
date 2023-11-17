@@ -72,6 +72,25 @@ class AutorController{
             next(erro);
         }
     }
+
+    static async listarAutorPorFiltro(req, res, next){
+        try{
+            const {nome, nacionalidade} = req.query;
+            
+            const busca = {};
+
+            if (nome) busca.nome = nome;
+            if (nacionalidade) busca.nacionalidade = { $regex: nacionalidade, $options: "i" };
+
+            const autoresResultado = await autor.find(busca);
+
+            res.status(200).json(autoresResultado);
+
+        }catch(erro){
+            next(erro);
+        }
+    }
+
 }
 
 export default AutorController;
