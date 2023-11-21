@@ -1,19 +1,31 @@
 // importação do modelo Livro
 // para ser chamado pelo controller
 import NaoEncontrado from "../erros/NaoEncontrado.js";
+import RequisicaoIncorreta from "../erros/RequisicaoIncorreta.js";
 import { autor } from "../models/index.js";
 import { livro } from "../models/index.js";
 
 class LivroController{
     static async listarLivros(req, res, next){
         try{
-            // controller chama o model Livro através
-            // do método livro.find({})
-            const listaLivros = await livro
-                .find({})
-                .populate("autor");
+            let { limite = 5, pagina = 1 } = req.query;
 
-            res.status(200).json(listaLivros);
+            limite = parseInt(limite);
+            pagina = parseInt(pagina);
+
+            if (limite > 0 && pagina >0){
+                // controller chama o model Livro através
+                // do método livro.find({})
+                const listaLivros = await livro
+                    .find()
+                    .skip((pagina - 1) * limite)
+                    .limit(limite)
+                    .populate("autor");
+
+                res.status(200).json(listaLivros);
+            }else{
+                next(new RequisicaoIncorreta());
+            } 
         }catch(erro){
             next(erro);
         }
