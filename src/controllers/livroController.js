@@ -88,13 +88,17 @@ class LivroController{
     static async listarLivrosPorFiltro(req, res, next){
         try{
             const buscaFinal = await processaBusca(req.query);
-            // populate() = coloca as informações dos models
-            const livrosResultado = await livro
-                .find(buscaFinal)
-                .populate("autor");
-    
-            res.status(200).json(livrosResultado);
 
+            if (buscaFinal !== null){
+                // populate() = coloca as informações dos models
+                const livrosResultado = await livro
+                    .find(buscaFinal)
+                    .populate("autor");
+
+                res.status(200).json(livrosResultado);
+            }else{
+                res.status(200).json({message: "Nenhum livro encontrado com esse autor(a)"});
+            }
         }catch(erro){
             next(erro);
         }
@@ -109,7 +113,7 @@ async function processaBusca(parametros){
     //const regex = new RegExp(titulo, "i");
 
     // Cria um objeto para filtrar
-    const busca = {};
+    let busca = {};
 
     if (editora) busca.editora = editora;
     if (titulo) busca.titulo = { $regex: titulo, $options: "i" };
@@ -124,12 +128,12 @@ async function processaBusca(parametros){
     if (nomeAutor){
         const autorResu = await autor.findOne({ nome: nomeAutor });
 
-        const autorId = autorResu._id;
-
-        busca.autor = autorId;
+        if(autorResu !== null){
+            busca.autor = autorResu._id;
+        }else{
+            busca = null;
+        } 
     }
-
-
     return busca;
 }
 
