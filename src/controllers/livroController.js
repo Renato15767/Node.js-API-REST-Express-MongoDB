@@ -9,7 +9,10 @@ class LivroController{
         try{
             // controller chama o model Livro através
             // do método livro.find({})
-            const listaLivros = await livro.find({});
+            const listaLivros = await livro
+                .find({})
+                .populate("autor");
+
             res.status(200).json(listaLivros);
         }catch(erro){
             next(erro);
@@ -20,7 +23,10 @@ class LivroController{
         try{
             // Pega o ID da URL
             const id = req.params.id;
-            const livroEncontrado = await livro.findById(id);
+            const livroEncontrado = await livro
+                .findById(id)
+                .populate("autor");
+
             if(livroEncontrado !== null){
                 res.status(200).json(livroEncontrado);
             }else{
@@ -33,19 +39,13 @@ class LivroController{
     }
 
     static async cadastrarLivros(req, res, next){
-        const novoLivro = req.body;
-        try{
-            // Pega o autor pelo id do autor em "novoAutor"
-            const autorEncontrado = await autor.findById(novoLivro.autor);
-            // Adiciona o id do autor ao "novoLivro"
-            const livroCompleto = { ...novoLivro, autor: {...autorEncontrado._doc}};
-            // Cria livro
-            const livroCriado = await livro.create(livroCompleto);
-
-            // Devolve a msg
-            res.status(201).json({ message: "Criado com sucesso!", livro: livroCriado });
-
-        }catch(erro){
+        try {
+            let livroResp = new livro(req.body);
+      
+            const livroResultado = await livroResp.save();
+      
+            res.status(201).json(livroResultado);
+        } catch (erro) {
             next(erro);
         }
     }
@@ -87,8 +87,11 @@ class LivroController{
     // Para busca no POSTMAN -> /busca?editora=Aleph&titulo=Neuromancer
     static async listarLivrosPorFiltro(req, res, next){
         try{
-            const buscaFinal = processaBusca(req.query);
-            const livrosResultado = await livro.find(buscaFinal);
+            const buscaFinal = await processaBusca(req.query);
+            // populate() = coloca as informações dos models
+            const livrosResultado = await livro
+                .find(buscaFinal)
+                .populate("autor");
     
             res.status(200).json(livrosResultado);
 
@@ -98,8 +101,8 @@ class LivroController{
     }
 }
 
-function processaBusca(parametros){
-    const {editora, titulo, minPaginas, maxPaginas} = parametros;
+async function processaBusca(parametros){
+    const {editora, titulo, minPaginas, maxPaginas, nomeAutor } = parametros;
 
     // Cria uma regex para conseguir fazer uma busca sem precisar de todas as informações
     // o "i" considera letras maísculas e minúsculas
@@ -118,8 +121,39 @@ function processaBusca(parametros){
     // $lte = Less Than or Equal = Menor ou igual
     if (maxPaginas) busca.paginas.$lte = maxPaginas;
 
+    if (nomeAutor){
+        const autorResu = await autor.findOne({ nome: nomeAutor });
+
+        const autorId = autorResu._id;
+
+        busca.autor = autorId;
+    }
+
+
     return busca;
 }
 
 
 export default LivroController;
+
+
+/*
+    Método antigo
+    static async cadastrarLivros(req, res, next){
+        const novoLivro = req.body;
+        try{
+            // Pega o autor pelo id do autor em "novoAutor"
+            const autorEncontrado = await autor.findById(novoLivro.autor);
+            // Adiciona o id do autor ao "novoLivro"
+            const livroCompleto = { ...novoLivro, autor: {...autorEncontrado._doc}};
+            // Cria livro
+            const livroCriado = await livro.create(livroCompleto);
+
+            // Devolve a msg
+            res.status(201).json({ message: "Criado com sucesso!", livro: livroCriado });
+
+        }catch(erro){
+            next(erro);
+        }
+    }
+*/

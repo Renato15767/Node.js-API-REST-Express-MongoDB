@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { autorSchema } from "./Autor.js";
+//import { autorSchema } from "./Autor.js";
 
 // Schema é um objeto de configuração que será usado para o 
 // Mongoose definir internamente a estrutura e as propriedades
@@ -33,7 +33,11 @@ const livroSchema = new mongoose.Schema({
             message: "Valor de páginas de estar entre 10 e 5000. Valor fornecido {VALUE}."
         }
     },
-    autor: autorSchema
+    autor: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "autores",
+        required: [true, "O(a) autor(a) é obrigatório."]
+    }
 },
 // Se será versionado ou não
 {versionKey: false});

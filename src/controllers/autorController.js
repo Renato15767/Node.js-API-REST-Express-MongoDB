@@ -73,6 +73,7 @@ class AutorController{
         }
     }
 
+    // Não está filtrando
     static async listarAutorPorFiltro(req, res, next){
         try{
             const {nome, nacionalidade} = req.query;
