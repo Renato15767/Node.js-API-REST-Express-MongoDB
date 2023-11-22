@@ -7,18 +7,29 @@ import { livro } from "../models/index.js";
 
 class LivroController{
     static async listarLivros(req, res, next){
+        //EX: /livros?ordenacao=_id:-1
         try{
-            let { limite = 5, pagina = 1 } = req.query;
+            let { limite = 5, pagina = 1, ordenacao = "_id:-1" } = 
+            req.query;
+
+            // o "split()" separa a pelo ":"
+            let [campoOrdenacao, ordem] = ordenacao.split(":");
 
             limite = parseInt(limite);
             pagina = parseInt(pagina);
+            ordem = parseInt(ordem);
 
             if (limite > 0 && pagina >0){
                 // controller chama o model Livro através
                 // do método livro.find({})
                 const listaLivros = await livro
                     .find()
+                    // Organiza a listagem, -1 é descrecente e +1 é crescente
+                    // O "[]" serve para inserir a let dentro do if
+                    .sort({ [campoOrdenacao]: ordem })
+                    // Pula os livros, ou seja, mostra os livros futuros/outra página
                     .skip((pagina - 1) * limite)
+                    // Limita a quantidade de livros mostrados
                     .limit(limite)
                     .populate("autor");
 
