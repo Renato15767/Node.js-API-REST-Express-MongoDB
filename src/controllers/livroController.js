@@ -1,7 +1,6 @@
 // importação do modelo Livro
 // para ser chamado pelo controller
 import NaoEncontrado from "../erros/NaoEncontrado.js";
-import RequisicaoIncorreta from "../erros/RequisicaoIncorreta.js";
 import { autor } from "../models/index.js";
 import { livro } from "../models/index.js";
 
@@ -9,34 +8,14 @@ class LivroController{
     static async listarLivros(req, res, next){
         //EX: /livros?ordenacao=_id:-1
         try{
-            let { limite = 5, pagina = 1, ordenacao = "_id:-1" } = 
-            req.query;
+            const buscaLivros = livro.find()
+                .populate("autor");
 
-            // o "split()" separa a pelo ":"
-            let [campoOrdenacao, ordem] = ordenacao.split(":");
+            // req.resultado será passado para o Middleware que irá fazer a paginação
+            req.resultado = buscaLivros;
 
-            limite = parseInt(limite);
-            pagina = parseInt(pagina);
-            ordem = parseInt(ordem);
-
-            if (limite > 0 && pagina >0){
-                // controller chama o model Livro através
-                // do método livro.find({})
-                const listaLivros = await livro
-                    .find()
-                    // Organiza a listagem, -1 é descrecente e +1 é crescente
-                    // O "[]" serve para inserir a let dentro do if
-                    .sort({ [campoOrdenacao]: ordem })
-                    // Pula os livros, ou seja, mostra os livros futuros/outra página
-                    .skip((pagina - 1) * limite)
-                    // Limita a quantidade de livros mostrados
-                    .limit(limite)
-                    .populate("autor");
-
-                res.status(200).json(listaLivros);
-            }else{
-                next(new RequisicaoIncorreta());
-            } 
+            // Executa o próximo Middleware registrado nessa rota
+            next();
         }catch(erro){
             next(erro);
         }
@@ -107,18 +86,21 @@ class LivroController{
         }
     }
 
-    // Para busca no POSTMAN -> /busca?editora=Aleph&titulo=Neuromancer
+    // Para busca no POSTMAN -> /busca?nomeAutor=Willian Gibson&ordenacao=titulo:-1
     static async listarLivrosPorFiltro(req, res, next){
         try{
             const buscaFinal = await processaBusca(req.query);
 
             if (buscaFinal !== null){
                 // populate() = coloca as informações dos models
-                const livrosResultado = await livro
+                const livrosResultado = livro
                     .find(buscaFinal)
                     .populate("autor");
 
-                res.status(200).json(livrosResultado);
+                req.resultado = livrosResultado;
+
+                // Executa o middleware de paginação
+                next();
             }else{
                 res.status(200).json({message: "Nenhum livro encontrado com esse autor(a)"});
             }
