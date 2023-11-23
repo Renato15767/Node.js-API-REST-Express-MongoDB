@@ -8,8 +8,7 @@ class LivroController{
     static async listarLivros(req, res, next){
         //EX: /livros?ordenacao=_id:-1
         try{
-            const buscaLivros = livro.find()
-                .populate("autor");
+            const buscaLivros = livro.find();
 
             // req.resultado será passado para o Middleware que irá fazer a paginação
             req.resultado = buscaLivros;
@@ -26,8 +25,7 @@ class LivroController{
             // Pega o ID da URL
             const id = req.params.id;
             const livroEncontrado = await livro
-                .findById(id)
-                .populate("autor");
+                .findById(id);
 
             if(livroEncontrado !== null){
                 res.status(200).json(livroEncontrado);
@@ -94,8 +92,7 @@ class LivroController{
             if (buscaFinal !== null){
                 // populate() = coloca as informações dos models
                 const livrosResultado = livro
-                    .find(buscaFinal)
-                    .populate("autor");
+                    .find(buscaFinal);
 
                 req.resultado = livrosResultado;
 

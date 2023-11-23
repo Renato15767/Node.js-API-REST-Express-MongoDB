@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import autopopulate from "mongoose-autopopulate";
 //import { autorSchema } from "./Autor.js";
 
 // Schema é um objeto de configuração que será usado para o 
@@ -36,11 +37,14 @@ const livroSchema = new mongoose.Schema({
     autor: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "autores",
-        required: [true, "O(a) autor(a) é obrigatório."]
+        required: [true, "O(a) autor(a) é obrigatório."],
+        autopopulate: true
     }
 },
 // Se será versionado ou não
 {versionKey: false});
+
+livroSchema.plugin(autopopulate);
 
 // Fechamento do modelo
 const livro = mongoose.model("livro", livroSchema);
